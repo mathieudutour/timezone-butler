@@ -1,0 +1,13 @@
+{
+  "editor.formatOnSave": true,
+  "html.format.enable": false,
+  "spellright.language": [
+    "en"
+  ],
+  "spellright.documentTypes": [
+    "markdown",
+    "latex",
+    "plaintext",
+    "html"
+  ]
+}

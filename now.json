@@ -1,0 +1,13 @@
+{
+  "version": 1,
+  "env": {
+    "NODE_ENV": "production",
+    "SLACK_CLIENT_ID": "@slack_client_id",
+    "SLACK_CLIENT_SECRET": "@slack_client_secret",
+    "SLACK_SIGNING_SECRET": "@slack_signing_secret",
+    "MONGO_USER": "@mongo_user",
+    "MONGO_PASSWORD": "@mongo_password",
+    "MONGO_URL": "@mongo_url"
+  },
+  "public": true
+}

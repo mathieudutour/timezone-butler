@@ -1,0 +1,35 @@
+{
+  "name": "slack-timezone-butler",
+  "version": "0.1.0",
+  "description": "A Slack butler who will take care of the timezone differences in your team.",
+  "main": "lib/index.js",
+  "scripts": {
+    "start": "micro",
+    "dev": "source ./.env && micro-dev",
+    "inspect": "node --inspect node_modules/.bin/micro-dev",
+    "test": "eslint . && jest"
+  },
+  "author": "Mathieu Dutour",
+  "license": "ISC",
+  "dependencies": {
+    "micro": "^9.3.3",
+    "mongodb": "^3.1.10",
+    "tsscmp": "^1.0.6"
+  },
+  "devDependencies": {
+    "eslint": "^5.9.0",
+    "eslint-config-airbnb-base": "^13.1.0",
+    "eslint-config-prettier": "^3.3.0",
+    "eslint-plugin-import": "^2.14.0",
+    "eslint-plugin-prettier": "^3.0.0",
+    "jest": "^23.6.0",
+    "micro-dev": "^3.0.0",
+    "prettier": "^1.15.2"
+  },
+  "prettier": {
+    "proseWrap": "never",
+    "singleQuote": true,
+    "trailingComma": "es5",
+    "semi": false
+  }
+}
