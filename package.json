@@ -12,6 +12,7 @@
   "author": "Mathieu Dutour",
   "license": "ISC",
   "dependencies": {
+    "cookie-session": "^2.0.0-beta.3",
     "micro": "^9.3.3",
     "mongodb": "^3.1.10",
     "tsscmp": "^1.0.6"
