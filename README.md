@@ -41,10 +41,14 @@ Click on the button below:
   npm install
   npm install -g ngrok
   ```
-- Create copy `.env.example` to `.env` and replace the environment variable
+- Copy `.env.example` to `.env` and replace the environment variables (you will need to [create a new slack app](https://api.slack.com/apps))
 - Start the server
   ```bash
   npm run dev
+  ```
+- expose your server to the internet
+  ```bash
+  ngrok http 3000
   ```
 
 ## License
