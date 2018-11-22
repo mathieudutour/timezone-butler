@@ -1,5 +1,5 @@
 <div align="center">
-<img alt="Timezone Butler" height="128" width="128" src="https://user-images.githubusercontent.com/3254314/48670345-471db980-eb0e-11e8-9645-14684a063079.png" srcset=" https://user-images.githubusercontent.com/3254314/48670345-471db980-eb0e-11e8-9645-14684a063079.png 1x,https://user-images.githubusercontent.com/3254314/48670329-e7bfa980-eb0d-11e8-8449-d4370d6d1e9f.png 2x" align="center" />
+<img alt="Timezone Butler" height="128" width="128" src="https://user-images.githubusercontent.com/3254314/48670329-e7bfa980-eb0d-11e8-8449-d4370d6d1e9f.png" align="center" />
 
 <h1>Meet your new Timezone Butler</h1>
 <p>
@@ -11,15 +11,11 @@
       alt="Add to Slack"
       height="40"
       width="139"
-      src="https://platform.slack-edge.com/img/add_to_slack.png"
-      srcset="
-        https://platform.slack-edge.com/img/add_to_slack.png    1x,
-        https://platform.slack-edge.com/img/add_to_slack@2x.png 2x
-      " />
+      src="https://platform.slack-edge.com/img/add_to_slack@2x.png"  />
 </a>
 <div>&nbsp;</div>
 <div>&nbsp;</div>
-<img src="https://user-images.githubusercontent.com/3254314/48670820-7801ec80-eb16-11e8-85ef-26b7bc742bc9.png" alt="Timezone Butler demo" />
+<img src="https://user-images.githubusercontent.com/3254314/48906451-c8ee4980-ee64-11e8-97df-13ad833001a7.png" alt="Timezone Butler demo" />
 
 </div>
 <div height="100px">&nbsp;</div><div height="100px">&nbsp;</div>
@@ -33,11 +29,7 @@ Click on the button below:
       alt="Add to Slack"
       height="40"
       width="139"
-      src="https://platform.slack-edge.com/img/add_to_slack.png"
-      srcset="
-        https://platform.slack-edge.com/img/add_to_slack.png    1x,
-        https://platform.slack-edge.com/img/add_to_slack@2x.png 2x
-      " />
+      src="https://platform.slack-edge.com/img/add_to_slack@2x.png" />
 </a>
 
 ## Contributing
