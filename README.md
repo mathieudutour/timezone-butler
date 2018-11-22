@@ -15,7 +15,7 @@
 </a>
 <div>&nbsp;</div>
 <div>&nbsp;</div>
-<img src="https://user-images.githubusercontent.com/3254314/48906451-c8ee4980-ee64-11e8-97df-13ad833001a7.png" alt="Timezone Butler demo" />
+<img src="https://user-images.githubusercontent.com/3254314/48909801-82055180-ee6e-11e8-904c-c4713900a46c.png" alt="Timezone Butler demo" />
 
 </div>
 <div height="100px">&nbsp;</div><div height="100px">&nbsp;</div>
