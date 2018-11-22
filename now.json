@@ -2,6 +2,7 @@
   "version": 1,
   "env": {
     "NODE_ENV": "production",
+    "SLACK_APP_ID": "@timezone_butler_slack_app_id",
     "SLACK_CLIENT_ID": "@timezone_butler_slack_client_id",
     "SLACK_CLIENT_SECRET": "@timezone_butler_slack_client_secret",
     "SLACK_SIGNING_SECRET": "@timezone_butler_slack_signing_secret",
