@@ -7,7 +7,8 @@
     "start": "micro",
     "dev": "source ./.env && micro-dev",
     "inspect": "node --inspect node_modules/.bin/micro-dev",
-    "test": "eslint . && jest"
+    "test": "eslint . && jest",
+    "test:watch": "npm run test -- --watch --no-watchman"
   },
   "author": "Mathieu Dutour",
   "license": "ISC",
