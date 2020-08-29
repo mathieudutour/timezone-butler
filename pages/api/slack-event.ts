@@ -6,8 +6,8 @@ export default async function slackDirectInstall(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  const body = await verifyAndgetBody(req)
   try {
+    const body = await verifyAndgetBody(req)
     res.send(await handleSlackEvent(body))
   } catch (err) {
     res.statusCode = 500
