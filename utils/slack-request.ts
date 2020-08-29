@@ -32,6 +32,8 @@ export const verifyAndgetBody = async (req: NextApiRequest) => {
     return req.body
   }
 
+  console.log(req.body)
+
   const hmac = crypto.createHmac('sha256', SLACK_SIGNING_SECRET)
   const [version, hash] = signature.split('=')
   hmac.update(`${version}:${ts}:${JSON.stringify(req.body)}`)
