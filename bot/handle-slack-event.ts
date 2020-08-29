@@ -114,29 +114,21 @@ const handleUninstall = async (body: { team_id: string }) => {
   return `removed team ${body.team_id}`
 }
 
-export default async function (
-  body:
-    | { type: 'url_verification'; challenge: string }
-    | {
-        type: 'event_callback'
-        team_id: string
-        event: {
-          type: 'app_uninstalled' | 'user_change' | 'message'
-          subtype: string
-          bot_id?: string
-          hidden: boolean
-          user: string
-          channel_type: 'app_home' | 'im'
-          text: string
-          channel: string
-          thread_ts: string
-        }
-      }
-) {
-  if (body.type === 'url_verification') {
-    return body.challenge
+export default async function (body: {
+  type: 'event_callback'
+  team_id: string
+  event: {
+    type: 'app_uninstalled' | 'user_change' | 'message'
+    subtype: string
+    bot_id?: string
+    hidden: boolean
+    user: string
+    channel_type: 'app_home' | 'im'
+    text: string
+    channel: string
+    thread_ts: string
   }
-
+}) {
   if (body.type !== 'event_callback' || !body.event) {
     return 'not sure how to handle that...'
   }

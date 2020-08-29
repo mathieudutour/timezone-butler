@@ -16,7 +16,7 @@ function streamToString(stream: any): Promise<string> {
   })
 }
 
-export const verifyAndgetBody = async (req: NextApiRequest) => {
+export const verifyAndGetBody = async (req: NextApiRequest) => {
   // Request signature
   const signature = req.headers['x-slack-signature']
   // Request timestamp

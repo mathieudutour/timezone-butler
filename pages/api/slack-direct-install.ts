@@ -2,7 +2,7 @@ import crypto from 'crypto'
 import { NextApiResponse, NextApiRequest } from 'next'
 import withSession from '../../utils/session'
 
-export default function slackDirectInstall(
+export default async function slackDirectInstall(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
@@ -10,7 +10,7 @@ export default function slackDirectInstall(
     .randomBytes(Math.ceil(30 / 2))
     .toString('hex')
     .slice(0, 30)
-  withSession(req, res).session.slackOauthState = state
+  ;(await withSession(req, res)).session.slackOauthState = state
   res.redirect(
     302,
     `https://slack.com/oauth/v2/authorize?client_id=${

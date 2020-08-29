@@ -1,5 +1,6 @@
 import CookieSession from 'cookie-session'
 import { NextApiResponse, NextApiRequest } from 'next'
+import runMiddleware from './run-middleware'
 
 const cookieSession = CookieSession({
   name: 'slack-oauth-session',
@@ -7,12 +8,11 @@ const cookieSession = CookieSession({
   maxAge: 60000,
 })
 
-export default function (
+export default async function (
   req: NextApiRequest,
   res: NextApiResponse
-): NextApiRequest & { session: { [key: string]: string } } {
-  // @ts-ignore
-  cookieSession(req, res, () => {})
+): Promise<NextApiRequest & { session: { [key: string]: string } }> {
+  await runMiddleware(req, res, cookieSession)
   // @ts-ignore
   return req
 }

@@ -1,11 +1,18 @@
 import { NextApiResponse, NextApiRequest } from 'next'
+import Cors from 'cors'
 import * as slackRequest from '../../../utils/slack-request'
 import { addTeam } from '../../../utils/db'
 import areStringsEqual from '../../../utils/are-strings-equal'
 import withSession from '../../../utils/session'
+import runMiddleware from '../../../utils/run-middleware'
+
+const cors = Cors({
+  methods: ['GET', 'HEAD'],
+})
 
 export default async function (req: NextApiRequest, res: NextApiResponse) {
-  const state = withSession(req, res).session.slackOauthState
+  await runMiddleware(req, res, cors)
+  const state = (await withSession(req, res)).session.slackOauthState
   if (
     (req.query.error && req.query.error === 'access_denied') ||
     !req.query.state ||
