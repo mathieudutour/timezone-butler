@@ -10,6 +10,7 @@ export default async function slackDirectInstall(
     const body = await verifyAndgetBody(req)
     res.send(await handleSlackEvent(body))
   } catch (err) {
+    console.log(err)
     res.statusCode = 500
     res.send(err)
   }

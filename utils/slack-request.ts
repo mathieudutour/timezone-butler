@@ -29,16 +29,12 @@ export const verifyAndgetBody = async (req: NextApiRequest) => {
   }
 
   if (!SLACK_SIGNING_SECRET) {
-    try {
-      return JSON.parse(req.body)
-    } catch (err) {
-      return req.body
-    }
+    return req.body
   }
 
   const hmac = crypto.createHmac('sha256', SLACK_SIGNING_SECRET)
   const [version, hash] = signature.split('=')
-  hmac.update(`${version}:${ts}:${req.body}`)
+  hmac.update(`${version}:${ts}:${JSON.stringify(req.body)}`)
 
   if (!areStringsEqual(hash, hmac.digest('hex'))) {
     const error = new Error('Slack request signing verification failed')
@@ -46,11 +42,7 @@ export const verifyAndgetBody = async (req: NextApiRequest) => {
     throw error
   }
 
-  try {
-    return JSON.parse(req.body)
-  } catch (err) {
-    return req.body
-  }
+  return req.body
 }
 
 export const post = <T>(
