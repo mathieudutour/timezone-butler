@@ -1,4 +1,4 @@
-const timezones = {
+const timezones: { [tz: string]: number } = {
   NZDT: 12 * 3600,
   AEDT: 11 * 3600,
   ACDT: 10.5 * 3600,
@@ -34,11 +34,14 @@ const timezones = {
   AKST: -9 * 3600,
   HDT: -9 * 3600,
   HST: -10 * 3600,
-  SST: -11 * 3600
+  SST: -11 * 3600,
 }
 
 // match CET or PST or ...
-const timezonesRegex = ({ start, end } = {}) => {
+const timezonesRegex = ({
+  start,
+  end,
+}: { start?: boolean; end?: boolean } = {}) => {
   if (start) {
     return `((?: |^)(?:${Object.keys(timezones).join('|')}))`
   }
@@ -61,21 +64,30 @@ const shortTimezone = `(\\d{1,2}) ?${timezonesRegex({ end: true })}`
 // put everything together
 const REGEX = new RegExp(
   `${timezonesRegex({
-    start: true
+    start: true,
   })}? ?(${longTime}|${shortTime}|${shortTimezone}) ?${timezonesRegex({
-    end: true
+    end: true,
   })}?`,
   'gi'
 )
 
-module.exports = message => {
-  const times = []
+export type Time = {
+  match: string
+  time: number
+  ambigousAPM: boolean
+} & (
+  | { timezoneModifier: string; timezoneModifierValue: number }
+  | { timezoneModifier: undefined; timezoneModifierValue: undefined }
+)
+
+export default function (message: string) {
+  const times: Time[] = []
 
   let match = REGEX.exec(message)
 
   while (match) {
-    let hours = parseInt(match[4] || match[7] || match[9] || 0, 10)
-    const minutes = parseInt(match[5] || 0, 10)
+    let hours = parseInt(match[4] || match[7] || match[9] || '0', 10)
+    const minutes = parseInt(match[5] || '0', 10)
 
     let amOrPm = match[6] || match[8]
 
@@ -95,25 +107,34 @@ module.exports = message => {
       hours += 12
     }
 
-    let timezoneModifier = match[1] || match[11] || match[10]
+    let timezoneModifier: string | undefined =
+      match[1] || match[11] || match[10]
     if (timezoneModifier) {
       timezoneModifier = timezoneModifier.trim().toUpperCase()
     }
 
-    times.push({
-      match: match[0].trim(),
-      time: hours * 3600 + minutes * 60,
-      timezoneModifier,
-      timezoneModifierValue: timezoneModifier
-        ? timezones[timezoneModifier]
-        : undefined,
-      ambigousAPM: !!match[10]
-    })
+    times.push(
+      timezoneModifier
+        ? {
+            match: match[0].trim(),
+            time: hours * 3600 + minutes * 60,
+            timezoneModifier,
+            timezoneModifierValue: timezones[timezoneModifier],
+            ambigousAPM: !!match[10],
+          }
+        : {
+            match: match[0].trim(),
+            time: hours * 3600 + minutes * 60,
+            timezoneModifier: undefined,
+            timezoneModifierValue: undefined,
+            ambigousAPM: !!match[10],
+          }
+    )
 
     match = REGEX.exec(message)
   }
 
-  const dedupe = {}
+  const dedupe: { [key: string]: boolean } = {}
 
   return times.filter(({ time, timezoneModifierValue }) => {
     if (dedupe[`${time}${timezoneModifierValue}`]) {

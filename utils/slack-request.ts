@@ -1,11 +1,13 @@
-const https = require('https')
-const { text } = require('micro')
-const crypto = require('crypto')
-const timingSafeCompare = require('tsscmp')
+import https from 'https'
+import crypto from 'crypto'
+import { NextApiRequest } from 'next'
+import areStringsEqual from './are-strings-equal'
 
 const { SLACK_SIGNING_SECRET } = process.env
 
-module.exports.verifyAndgetBody = async req => {
+export type Team = { [id: string]: number } & { _token: string; _botId: string }
+
+export const verifyAndgetBody = async (req: NextApiRequest) => {
   // Request signature
   const signature = req.headers['x-slack-signature']
   // Request timestamp
@@ -15,42 +17,48 @@ module.exports.verifyAndgetBody = async req => {
   // Subtract 5 minutes from current time
   const fiveMinutesAgo = Math.floor(Date.now() / 1000) - 60 * 5
 
-  if (ts < fiveMinutesAgo) {
+  if (
+    typeof ts !== 'string' ||
+    parseInt(ts) < fiveMinutesAgo ||
+    !signature ||
+    typeof signature !== 'string'
+  ) {
     const error = new Error('Slack request signing verification failed')
-    error.code = 'SLACKHTTPHANDLER_REQUEST_TIMELIMIT_FAILURE'
+    // error.code = 'SLACKHTTPHANDLER_REQUEST_TIMELIMIT_FAILURE'
     throw error
   }
 
-  // body
-  const body = await text(req)
-
   if (!SLACK_SIGNING_SECRET) {
     try {
-      return JSON.parse(body)
+      return JSON.parse(req.body)
     } catch (err) {
-      return body
+      return req.body
     }
   }
 
   const hmac = crypto.createHmac('sha256', SLACK_SIGNING_SECRET)
   const [version, hash] = signature.split('=')
-  hmac.update(`${version}:${ts}:${body}`)
+  hmac.update(`${version}:${ts}:${req.body}`)
 
-  if (!timingSafeCompare(hash, hmac.digest('hex'))) {
+  if (!areStringsEqual(hash, hmac.digest('hex'))) {
     const error = new Error('Slack request signing verification failed')
-    error.code = 'SLACKHTTPHANDLER_REQUEST_SIGNATURE_VERIFICATION_FAILURE'
+    // error.code = 'SLACKHTTPHANDLER_REQUEST_SIGNATURE_VERIFICATION_FAILURE'
     throw error
   }
 
   try {
-    return JSON.parse(body)
+    return JSON.parse(req.body)
   } catch (err) {
-    return body
+    return req.body
   }
 }
 
-module.exports.post = (path, token, payload) => {
-  const postData = payload ? JSON.stringify(payload) : {}
+export const post = <T>(
+  path: string,
+  token?: string,
+  payload?: any
+): Promise<T> => {
+  const postData = payload ? JSON.stringify(payload) : ''
 
   const options = {
     hostname: 'slack.com',
@@ -70,19 +78,17 @@ module.exports.post = (path, token, payload) => {
 
   return new Promise((resolve, reject) => {
     let data = ''
-    const req = https.request(options, res => {
-      res.on('data', d => {
+    const req = https.request(options, (res) => {
+      res.on('data', (d) => {
         data += d
       })
 
       res.on('end', () => {
-        res.data = data
         try {
-          res.body = JSON.parse(res.data)
+          resolve(JSON.parse(data))
         } catch (err) {
-          res.body = {}
+          reject(err)
         }
-        resolve(res)
       })
     })
 
@@ -93,7 +99,7 @@ module.exports.post = (path, token, payload) => {
   })
 }
 
-module.exports.get = (path, token) => {
+export const get = <T>(path: string, token: string): Promise<T> => {
   const options = {
     hostname: 'slack.com',
     port: 443,
@@ -106,19 +112,17 @@ module.exports.get = (path, token) => {
 
   return new Promise((resolve, reject) => {
     let data = ''
-    const req = https.request(options, res => {
-      res.on('data', d => {
+    const req = https.request(options, (res) => {
+      res.on('data', (d) => {
         data += d
       })
 
       res.on('end', () => {
-        res.data = data
         try {
-          res.body = JSON.parse(res.data)
+          resolve(JSON.parse(data))
         } catch (err) {
-          res.body = {}
+          reject(err)
         }
-        resolve(res)
       })
     })
 
@@ -127,12 +131,25 @@ module.exports.get = (path, token) => {
   })
 }
 
-module.exports.getUsers = async (_token, _botId, cursor) => {
+export const getUsers = async (
+  _token: string,
+  _botId: string,
+  cursor?: any
+) => {
   let path = 'users.list'
   if (cursor) {
     path += `?cursor=${encodeURIComponent(cursor)}`
   }
-  const { body } = await module.exports.get(path, _token)
+  const body: {
+    members: {
+      deleted?: boolean
+      is_bot?: boolean
+      is_app_user?: boolean
+      id: string
+      tz_offset: string
+    }[]
+    response_metadata?: { next_cursor?: any }
+  } = await get(path, _token)
   const members = body.members.reduce(
     (prev, member) => {
       if (
@@ -150,18 +167,18 @@ module.exports.getUsers = async (_token, _botId, cursor) => {
     {
       _token,
       _botId,
-    }
+    } as Team
   )
 
   // paginate
   if (body.response_metadata && body.response_metadata.next_cursor) {
-    const additionalMembers = await module.exports.getUsers(
+    const additionalMembers = await getUsers(
       _token,
       _botId,
       body.response_metadata.next_cursor
     )
 
-    Object.keys(additionalMembers).forEach(k => {
+    Object.keys(additionalMembers).forEach((k) => {
       members[k] = additionalMembers[k]
     })
   }
@@ -169,8 +186,8 @@ module.exports.getUsers = async (_token, _botId, cursor) => {
   return members
 }
 
-module.exports.getUserInfo = async (_token, userId) => {
-  const { body } = await module.exports.get(
+export const getUserInfo = async (_token: string, userId: string) => {
+  const body: { user: any } = await get(
     `users.info?user=${userId}&include_locale=true`,
     _token
   )

@@ -1,4 +1,4 @@
-module.exports = (seconds, options) => {
+export default (seconds: number, options?: { ambigousAPM?: boolean }) => {
   let hours = Math.floor(seconds / 3600)
 
   const minutes = Math.floor((seconds - hours * 3600) / 60)

@@ -1,6 +1,9 @@
-const crypto = require('crypto')
+import crypto from 'crypto'
 
-module.exports = (session, query) => {
+export default function areStringsEqual(
+  session: string | string[],
+  query: string | string[]
+) {
   const stateFromSlack = Buffer.from(query)
   const stateFromSession = Buffer.from(session)
 

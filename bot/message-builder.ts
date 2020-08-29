@@ -1,13 +1,17 @@
-const secondsFormatter = require('./format-seconds')
+import secondsFormatter from './format-seconds'
+import { Time } from './timezones'
 
-function message(times, userTZ, posterTZ) {
+export function message(times: Time[], userTZ: number, posterTZ: number) {
   if (!userTZ) {
     return undefined
   }
 
   const text = times.map(
     ({ match, time, timezoneModifier, timezoneModifierValue }) => {
-      if (typeof timezoneModifier !== 'undefined') {
+      if (
+        typeof timezoneModifier !== 'undefined' &&
+        typeof timezoneModifierValue !== 'undefined'
+      ) {
         if (timezoneModifierValue === userTZ) {
           return `${timezoneModifier} is your timezone.`
         }
@@ -25,7 +29,11 @@ function message(times, userTZ, posterTZ) {
   return [...new Set(text)].join('\n')
 }
 
-module.exports = function messageBuilder(team, posterId, times) {
+export default function messageBuilder(
+  team: { [userId: string]: number },
+  posterId: string,
+  times: Time[]
+) {
   const posterTZ = team[posterId]
 
   if (typeof posterTZ === 'undefined') {
@@ -33,10 +41,10 @@ module.exports = function messageBuilder(team, posterId, times) {
   }
 
   const usersInDiffTZ = Object.keys(team).filter(
-    userId => userId !== posterId && team[userId] !== posterTZ
+    (userId) => userId !== posterId && team[userId] !== posterTZ
   )
 
-  return usersInDiffTZ.map(userId => {
+  return usersInDiffTZ.map((userId) => {
     const text = message(times, team[userId], posterTZ)
     return {
       user: userId,
@@ -44,5 +52,3 @@ module.exports = function messageBuilder(team, posterId, times) {
     }
   })
 }
-
-module.exports.message = message

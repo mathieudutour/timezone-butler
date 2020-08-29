@@ -4,7 +4,36 @@ const HELP_REGEX = /(\s|^)help(\s|$)/gi
 const CONVENIENT_TIME_REGEX = /(\s|^)convenient time(\s|$)/gi
 const DEBUG_REGEX = /(\s|^)debug(\s|$)/gi
 
-module.exports = (event, botId) => {
+export type Command =
+  | {
+      command: 'convenient-time'
+      userIds: Set<string>
+      message: string
+      event: { text: string }
+    }
+  | {
+      command: 'help'
+      userIds: undefined
+      message: string
+      event: { text: string }
+    }
+  | {
+      command: 'debug'
+      userIds: undefined
+      message: undefined
+      event: { text: string }
+    }
+  | {
+      command: undefined
+      userIds: undefined
+      message: undefined
+      event: undefined
+    }
+
+export default (
+  event: { text: string },
+  botId?: string
+): Command | undefined => {
   const { text } = event
 
   if (typeof text === 'undefined') {
@@ -12,7 +41,7 @@ module.exports = (event, botId) => {
     return undefined
   }
 
-  const userMentions = new Set()
+  const userMentions = new Set<string>()
 
   let match = USER_REGEX.exec(text)
 
@@ -35,6 +64,7 @@ module.exports = (event, botId) => {
       command: 'convenient-time',
       userIds: userMentions,
       message: text,
+      event,
     }
   }
 
@@ -42,6 +72,8 @@ module.exports = (event, botId) => {
     return {
       command: 'help',
       message: text,
+      event,
+      userIds: undefined,
     }
   }
 
@@ -49,6 +81,8 @@ module.exports = (event, botId) => {
     return {
       command: 'debug',
       event,
+      userIds: undefined,
+      message: undefined,
     }
   }
 

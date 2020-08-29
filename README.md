@@ -6,7 +6,7 @@
   A Slack butler who will take care of the timezone differences in your team.
 </p>
 <div>&nbsp;</div>
-<a href="/slack-direct-install">
+<a href="https://timezone-butler.now.sh/api/slack-direct-install">
   <img
       alt="Add to Slack"
       height="40"
@@ -24,7 +24,7 @@
 
 Click on the button below:
 
-<a href="/slack-direct-install">
+<a href="https://timezone-butler.now.sh/api/slack-direct-install">
   <img
       alt="Add to Slack"
       height="40"

@@ -1,0 +1,131 @@
+body,
+html {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial,
+    sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
+  font-size: 14px;
+  line-height: 1.5;
+  color: #24292e;
+}
+
+img {
+  border-style: none;
+}
+
+header {
+  padding: 60px 16px 40px;
+}
+
+hr {
+  margin: 80px auto;
+  border-color: rgba(0, 0, 0, 0.1);
+  width: 100px;
+}
+
+footer {
+  text-align: center;
+  opacity: 0.5;
+  padding-bottom: 40px;
+}
+
+footer svg {
+  position: relative;
+  top: 5px;
+}
+
+footer a {
+  text-decoration: none;
+  color: #24292e;
+}
+
+h2 {
+  font-size: 32px;
+  font-weight: 300;
+  margin-top: 150px;
+  margin-bottom: 16px;
+}
+
+.container {
+  max-width: 980px;
+  margin: 0 auto;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.hero {
+  padding: 40px 16px 0;
+}
+
+.hero h1 {
+  font-size: 40px;
+  font-weight: 300;
+  margin: 0;
+}
+
+.hero p {
+  font-size: 18px;
+  font-weight: 300;
+  margin: 0 0 24px;
+  opacity: 0.75;
+}
+
+.screenshot {
+  max-width: 760px;
+  margin: 40px auto;
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.06), 0 2px 32px rgba(0, 0, 0, 0.16);
+}
+
+.screenshot img {
+  max-width: 760px;
+  width: 100%;
+}
+
+.features {
+  display: flex;
+  font-size: 16px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.features h2 {
+  font-size: 24px;
+  font-weight: 300;
+  margin: 8px 0;
+}
+
+.features p {
+  opacity: 0.75;
+  margin-top: 0;
+}
+
+.features div {
+  flex: 1;
+  padding: 16px 24px;
+  min-width: 230px;
+  max-width: 400px;
+}
+
+.cta {
+  padding: 0.9em 1.25em;
+  color: rgba(36, 41, 46, 0.75);
+  background: transparent;
+  border: 1px solid rgba(36, 41, 46, 0.75);
+  border-radius: 0.3em;
+  position: relative;
+  display: inline-block;
+  text-decoration: none;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.25);
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 20px;
+  white-space: nowrap;
+  vertical-align: middle;
+  cursor: pointer;
+}
+
+.cta:hover {
+  background: rgba(36, 41, 46, 0.75);
+  color: white;
+}

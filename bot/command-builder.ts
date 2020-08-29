@@ -1,13 +1,15 @@
-const secondsFormatter = require('./format-seconds')
-const messageBuilder = require('./message-builder')
+import secondsFormatter from './format-seconds'
+import { message } from './message-builder'
+import { Team } from '../utils/slack-request'
+import { Command } from './commands'
 
-function convenientTime(team, userIds) {
+export function convenientTime(team: Team, userIds: string[]) {
   const userTZs = userIds
-    .map(id => team[id])
+    .map((id) => team[id])
     // there might be some bots or other weird stuff so let's just remove them if we don't know them
-    .filter(tz => typeof tz !== 'undefined')
+    .filter((tz) => typeof tz !== 'undefined')
 
-  const convenientTimes = userTZs.map(tz => ({
+  const convenientTimes = userTZs.map((tz) => ({
     start: 8 * 3600 - tz,
     end: 19 * 3600 - tz,
   }))
@@ -26,11 +28,16 @@ function convenientTime(team, userIds) {
   return time
 }
 
-module.exports = function commandBuilder(
-  team,
-  posterId,
-  { command, userIds, event } = {}
-) {
+export default function commandBuilder(
+  team: Team,
+  posterId: string,
+  { command, userIds, event }: Command = {
+    command: undefined,
+    userIds: undefined,
+    message: undefined,
+    event: undefined,
+  }
+): ({ text: string; user?: string } | { text?: string; user: string }[])[] {
   if (command === 'help') {
     return [
       {
@@ -50,7 +57,7 @@ module.exports = function commandBuilder(
     ]
   }
 
-  if (command === 'convenient-time') {
+  if (command === 'convenient-time' && userIds) {
     userIds.add(posterId)
     const userIdsArray = [...userIds]
     const time = convenientTime(team, userIdsArray)
@@ -71,21 +78,23 @@ module.exports = function commandBuilder(
       {
         text: `A convenient time for all of you would be between ${start} and ${end} UTC.`,
       },
-      userIdsArray.map(user => ({
+      userIdsArray.map((user) => ({
         user,
-        text: messageBuilder.message(
+        text: message(
           [
             {
               match: `${start} UTC`,
               time: time.start,
               timezoneModifier: 'UTC',
               timezoneModifierValue: 0,
+              ambigousAPM: false,
             },
             {
               match: `${end} UTC`,
               time: time.end,
               timezoneModifier: 'UTC',
               timezoneModifierValue: 0,
+              ambigousAPM: false,
             },
           ],
           team[user],
@@ -105,5 +114,3 @@ module.exports = function commandBuilder(
     ],
   ]
 }
-
-module.exports.convenientTime = convenientTime
