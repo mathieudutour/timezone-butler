@@ -1,6 +1,6 @@
 import CookieSession from 'cookie-session'
 import { NextApiResponse, NextApiRequest } from 'next'
-console.log(process.env)
+
 const cookieSession = CookieSession({
   name: 'slack-oauth-session',
   secret: process.env.COOKIES_SECRET,
