@@ -12,9 +12,7 @@ export default async function (req: NextApiRequest, res: NextApiResponse) {
     !state ||
     !areStringsEqual(req.query.state, state)
   ) {
-    res.statusCode = 302
-    res.setHeader('Location', `https://timezone-butler.now.sh`)
-    res.end()
+    res.redirect(302, `https://timezone-butler.now.sh`)
     return
   }
 
@@ -29,9 +27,7 @@ export default async function (req: NextApiRequest, res: NextApiResponse) {
   if (body.team_id && body.bot && body.bot.bot_access_token) {
     const team = await addTeam(body)
     console.log(`team added: ${team.teamId}`)
-    res.statusCode = 302
-    res.setHeader('Location', `/logged-in`)
-    res.end()
+    res.redirect(302, `/logged-in`)
   } else {
     console.log('error on slack oauth callback')
     console.log(body)

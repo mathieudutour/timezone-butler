@@ -7,6 +7,15 @@ const { SLACK_SIGNING_SECRET } = process.env
 
 export type Team = { [id: string]: number } & { _token: string; _botId: string }
 
+function streamToString(stream: any): Promise<string> {
+  const chunks: Buffer[] = []
+  return new Promise((resolve, reject) => {
+    stream.on('data', (chunk: Buffer) => chunks.push(chunk))
+    stream.on('error', reject)
+    stream.on('end', () => resolve(Buffer.concat(chunks).toString('utf8')))
+  })
+}
+
 export const verifyAndgetBody = async (req: NextApiRequest) => {
   // Request signature
   const signature = req.headers['x-slack-signature']
@@ -28,15 +37,15 @@ export const verifyAndgetBody = async (req: NextApiRequest) => {
     throw error
   }
 
-  if (!SLACK_SIGNING_SECRET) {
-    return req.body
-  }
+  const body = await streamToString(req.body)
 
-  console.log(req.body)
+  if (!SLACK_SIGNING_SECRET) {
+    return JSON.parse(body)
+  }
 
   const hmac = crypto.createHmac('sha256', SLACK_SIGNING_SECRET)
   const [version, hash] = signature.split('=')
-  hmac.update(`${version}:${ts}:${JSON.stringify(req.body)}`)
+  hmac.update(`${version}:${ts}:${body}`)
 
   if (!areStringsEqual(hash, hmac.digest('hex'))) {
     const error = new Error('Slack request signing verification failed')
@@ -44,7 +53,7 @@ export const verifyAndgetBody = async (req: NextApiRequest) => {
     throw error
   }
 
-  return req.body
+  return JSON.parse(body)
 }
 
 export const post = <T>(
