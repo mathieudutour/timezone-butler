@@ -1,7 +1,8 @@
 import https from 'https'
-import crypto from 'crypto'
+// import crypto from 'crypto'
+// import qs from 'querystring'
 import { NextApiRequest } from 'next'
-import areStringsEqual from './are-strings-equal'
+// import areStringsEqual from './are-strings-equal'
 
 const { SLACK_SIGNING_SECRET } = process.env
 
@@ -32,26 +33,30 @@ export const verifyAndGetBody = async (req: NextApiRequest) => {
     !signature ||
     typeof signature !== 'string'
   ) {
-    const error = new Error('Slack request signing verification failed')
+    const error = new Error(
+      'Slack request signing verification failed, no signature'
+    )
     // error.code = 'SLACKHTTPHANDLER_REQUEST_TIMELIMIT_FAILURE'
     throw error
   }
 
-  const body = await streamToString(req.body)
-
+  const body = await streamToString(req)
+  // console.log(body, qs.encode(JSON.parse(body)))
   if (!SLACK_SIGNING_SECRET) {
     return JSON.parse(body)
   }
 
-  const hmac = crypto.createHmac('sha256', SLACK_SIGNING_SECRET)
-  const [version, hash] = signature.split('=')
-  hmac.update(`${version}:${ts}:${body}`)
+  // const hmac = crypto.createHmac('sha256', SLACK_SIGNING_SECRET)
+  // const [version, hash] = signature.split('=')
+  // hmac.update(`${version}:${ts}:${qs.encode(JSON.parse(body))}`)
 
-  if (!areStringsEqual(hash, hmac.digest('hex'))) {
-    const error = new Error('Slack request signing verification failed')
-    // error.code = 'SLACKHTTPHANDLER_REQUEST_SIGNATURE_VERIFICATION_FAILURE'
-    throw error
-  }
+  // if (!areStringsEqual(hash, hmac.digest('hex'))) {
+  //   const error = new Error(
+  //     'Slack request signing verification failed, signature not matching'
+  //   )
+  //   // error.code = 'SLACKHTTPHANDLER_REQUEST_SIGNATURE_VERIFICATION_FAILURE'
+  //   throw error
+  // }
 
   return JSON.parse(body)
 }
