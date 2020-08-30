@@ -143,12 +143,6 @@ export default async function (body: {
     return 'ignore'
   }
 
-  const team = await getTeam(body.team_id)
-
-  if (!team) {
-    return `team ${body.team_id} is missing from cache`
-  }
-
   // for some reason, event.user is sometime a object with the entire user object
   // @ts-ignore
   if (typeof event.user === 'object' && event.user.id) {
@@ -162,6 +156,12 @@ export default async function (body: {
     (event.subtype && SUBTYPES.indexOf(event.subtype) === -1)
   ) {
     return 'ignore'
+  }
+
+  const team = await getTeam(body.team_id)
+
+  if (!team) {
+    return `team ${body.team_id} is missing from cache`
   }
 
   if (typeof team[event.user] === 'undefined') {
