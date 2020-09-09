@@ -48,22 +48,22 @@ export const getTeam = async (teamId: string) => {
 }
 
 export const addTeam = async (body: {
-  team_id: string
-  team_name: string
-  bot: { bot_access_token: string; bot_user_id: string }
+  access_token: string
+  bot_user_id: string
+  team: { id: string; name: string }
 }) => {
   const client = await getClient()
   const collection = client.db().collection('teams')
 
   const team: Team = {
-    teamId: body.team_id,
-    teamName: body.team_name,
-    token: body.bot.bot_access_token,
-    botId: body.bot.bot_user_id,
+    teamId: body.team.id,
+    teamName: body.team.name,
+    token: body.access_token,
+    botId: body.bot_user_id,
   }
 
   await collection.updateOne(
-    { teamId: body.team_id },
+    { teamId: body.team.id },
     { $set: team },
     { upsert: true }
   )

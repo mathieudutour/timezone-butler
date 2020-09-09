@@ -25,9 +25,14 @@ export default async function (req: NextApiRequest, res: NextApiResponse) {
   }
 
   const body: {
-    team_id: string
-    team_name: string
-    bot: { bot_access_token: string; bot_user_id: string }
+    ok: boolean
+    app_id: string
+    authed_user: { id: string }
+    scope: string
+    token_type: 'bot'
+    access_token: string
+    bot_user_id: string
+    team: { id: string; name: string }
   } = await slackRequest.post(
     `oauth.v2.access?code=${req.query.code}&client_id=${
       process.env.SLACK_CLIENT_ID
@@ -38,7 +43,7 @@ export default async function (req: NextApiRequest, res: NextApiResponse) {
     )}`
   )
 
-  if (body.team_id && body.bot && body.bot.bot_access_token) {
+  if (body.team && body.access_token) {
     const team = await addTeam(body)
     console.log(`team added: ${team.teamId}`)
     res.redirect(302, `/logged-in`)
