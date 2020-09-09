@@ -1,7 +1,7 @@
 import { MongoClient } from 'mongodb'
 import { getUsers } from './slack-request'
 
-const mongoURI = `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}@${process.env.MONGO_URL}/${process.env.NODE_ENV}?retryWrites=true`
+const mongoURI = `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}@${process.env.MONGO_URL}/${process.env.MONGO_DB}?retryWrites=true`
 
 const getClient = () => MongoClient.connect(mongoURI, { useNewUrlParser: true })
 
