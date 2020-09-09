@@ -1,4 +1,5 @@
 .env
+.env.staging
 fixtures
 node_modules
 .next
