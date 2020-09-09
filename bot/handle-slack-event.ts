@@ -72,13 +72,13 @@ const handleSlackMessage = async (
   if (event.channel_type === 'app_home' || event.channel_type === 'im') {
     const team = await getTeam(team_id)
 
-      if (!team) {
-        return `team ${team_id} is missing from db`
-      }
+    if (!team) {
+      return `team ${team_id} is missing from db`
+    }
 
-      if (typeof team[event.user] === 'undefined') {
-        return `unknown user ${event.user} in team ${team_id}`
-      }
+    if (typeof team[event.user] === 'undefined') {
+      return `unknown user ${event.user} in team ${team_id}`
+    }
 
     if (times.length) {
       const text = message(times, team[event.user] + 7200, team[event.user])

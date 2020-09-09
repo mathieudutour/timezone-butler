@@ -30,9 +30,7 @@ export type Command =
       event: undefined
     }
 
-export default (
-  event: { text: string }
-): Command | undefined => {
+export default (event: { text: string }): Command | undefined => {
   const { text } = event
 
   if (typeof text === 'undefined') {

@@ -15,6 +15,8 @@ export default async function slackDirectInstall(
     302,
     `https://slack.com/oauth/v2/authorize?client_id=${
       process.env.SLACK_CLIENT_ID
-    }&scope=app_mentions:read,channels:history,chat:write,commands,groups:history,groups:write,im:history,im:write,incoming-webhook,mpim:history,mpim:write,team:read,users:read&state=${state}`
+    }&scope=app_mentions:read,channels:history,chat:write,commands,groups:history,groups:write,im:history,im:write,incoming-webhook,mpim:history,mpim:write,team:read,users:read&state=${state}&redirect_uri=${encodeURIComponent(
+      process.env.BASE_URL + '/api/oauth/slack'
+    )}`
   )
 }
