@@ -56,8 +56,9 @@ const commandResponse = (
     .then(() => 'sent command response')
 
 const handleSlackMessage = async (
-  team: slackRequest.Team,
+  team_id: string,
   event: {
+    type: 'app_uninstalled' | 'message' | 'app_mention'
     channel_type: 'app_home' | 'im'
     user: string
     text: string
@@ -69,6 +70,16 @@ const handleSlackMessage = async (
 
   // direct message to the bot
   if (event.channel_type === 'app_home' || event.channel_type === 'im') {
+    const team = await getTeam(team_id)
+
+    if (!team) {
+      return `team ${team_id} is missing from db`
+    }
+
+    if (typeof team[event.user] === 'undefined') {
+      return `unknown user ${event.user} in team ${team_id}`
+    }
+
     if (times.length) {
       const text = message(times, team[event.user] + 7200, team[event.user])
       return slackRequest
@@ -85,14 +96,36 @@ const handleSlackMessage = async (
     return commandResponse(team, event, command)
   }
 
-  if (!times.length) {
-    const command = commandParser(event, team._botId)
+  if (!times) {
+    if (event.type === 'app_mention') {
+      const command = commandParser(event)
 
-    if (command) {
-      return commandResponse(team, event, command)
+      if (command) {
+        const team = await getTeam(team_id)
+
+        if (!team) {
+          return `team ${team_id} is missing from db`
+        }
+
+        if (typeof team[event.user] === 'undefined') {
+          return `unknown user ${event.user} in team ${team_id}`
+        }
+
+        return commandResponse(team, event, command)
+      }
     }
 
     return 'nothing to handle'
+  }
+
+  const team = await getTeam(team_id)
+
+  if (!team) {
+    return `team ${team_id} is missing from db`
+  }
+
+  if (typeof team[event.user] === 'undefined') {
+    return `unknown user ${event.user} in team ${team_id}`
   }
 
   return Promise.all(
@@ -118,7 +151,7 @@ export default async function (body: {
   type: 'event_callback'
   team_id: string
   event: {
-    type: 'app_uninstalled' | 'user_change' | 'message'
+    type: 'app_uninstalled' | 'message' | 'app_mention'
     subtype: string
     bot_id?: string
     hidden: boolean
@@ -150,6 +183,11 @@ export default async function (body: {
     event.user = event.user.id
   }
 
+  if (!event.user) {
+    console.log(event)
+    return 'missing user'
+  }
+
   if (
     event.type !== 'message' ||
     event.hidden ||
@@ -158,18 +196,5 @@ export default async function (body: {
     return 'ignore'
   }
 
-  const team = await getTeam(body.team_id)
-
-  if (!team) {
-    return `team ${body.team_id} is missing from cache`
-  }
-
-  if (typeof team[event.user] === 'undefined') {
-    if (!event.user) {
-      console.log(event)
-    }
-    return `unknown user ${event.user} in team ${body.team_id}`
-  }
-
-  return handleSlackMessage(team, event)
+  return handleSlackMessage(body.team_id, event)
 }

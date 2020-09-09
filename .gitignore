@@ -1,4 +1,5 @@
 .env
+.env.production
 fixtures
 node_modules
 .next
