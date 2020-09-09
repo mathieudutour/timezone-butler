@@ -31,8 +31,7 @@ export type Command =
     }
 
 export default (
-  event: { text: string },
-  botId?: string
+  event: { text: string }
 ): Command | undefined => {
   const { text } = event
 
@@ -49,10 +48,6 @@ export default (
     userMentions.add(match[1])
 
     match = USER_REGEX.exec(text)
-  }
-
-  if (botId && !userMentions.has(botId)) {
-    return undefined
   }
 
   const askHelp = text.match(HELP_REGEX)
