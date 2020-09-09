@@ -19,6 +19,7 @@ export default async function (req: NextApiRequest, res: NextApiResponse) {
     !state ||
     !areStringsEqual(req.query.state, state)
   ) {
+    console.log(req.query)
     res.redirect(302, `https://timezone-butler.now.sh`)
     return
   }
