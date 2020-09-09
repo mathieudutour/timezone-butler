@@ -29,7 +29,7 @@ export default async function (req: NextApiRequest, res: NextApiResponse) {
     team_name: string
     bot: { bot_access_token: string; bot_user_id: string }
   } = await slackRequest.post(
-    `oauth.access?code=${req.query.code}&client_id=${
+    `oauth.v2.access?code=${req.query.code}&client_id=${
       process.env.SLACK_CLIENT_ID
     }&client_secret=${
       process.env.SLACK_CLIENT_SECRET
