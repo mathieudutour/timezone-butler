@@ -99,10 +99,11 @@ const handleSlackMessage = async (
     return commandResponse(team, event, command)
   }
 
+  console.log(times)
   if (!times) {
     if (event.type === 'app_mention') {
       const command = commandParser(event)
-
+      console.log(command)
       if (command) {
         const team = await getTeam(team_id)
 
@@ -165,8 +166,6 @@ export default async function (body: {
     thread_ts: string
   }
 }) {
-  console.log(body.event)
-
   if (body.type !== 'event_callback' || !body.event) {
     return 'not sure how to handle that...'
   }
