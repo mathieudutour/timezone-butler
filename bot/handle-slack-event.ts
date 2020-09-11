@@ -188,6 +188,17 @@ export default async function (body: {
       return `unknown user ${event.user} in team ${body.team_id}`
     }
 
+    const previousConvo: {
+      messages: {}[]
+    } = await slackRequest.get('conversations.history', team._token, {
+      channel: event.channel,
+      count: 1,
+    })
+
+    if (previousConvo.messages.length) {
+      return 'already sent welcome message'
+    }
+
     return slackRequest
       .post('chat.postMessage', team._token, {
         channel: event.channel,

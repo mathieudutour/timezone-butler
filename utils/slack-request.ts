@@ -1,6 +1,6 @@
 import https from 'https'
 // import crypto from 'crypto'
-// import qs from 'querystring'
+import qs from 'querystring'
 import { NextApiRequest } from 'next'
 // import areStringsEqual from './are-strings-equal'
 
@@ -107,11 +107,11 @@ export const post = <T>(
   })
 }
 
-export const get = <T>(path: string, token: string): Promise<T> => {
+export const get = <T>(path: string, token: string, args?: any): Promise<T> => {
   const options = {
     hostname: 'slack.com',
     port: 443,
-    path: `/api/${path}`,
+    path: `/api/${path}${args ? `?${qs.stringify(args)}` : ''}`,
     method: 'GET',
     headers: {
       Authorization: `Bearer ${token}`,
