@@ -65,28 +65,8 @@ const handleSlackMessage = async (
     thread_ts: string
   }
 ) => {
-  console.log(event)
-  if (event.type === 'app_uninstalled') {
+  if (event.type === 'app_uninstalled' || event.type === 'app_home_opened') {
     return
-  }
-  if (event.type === 'app_home_opened') {
-    const team = await getTeam(team_id)
-
-    if (!team) {
-      return `team ${team_id} is missing from db`
-    }
-
-    if (typeof team[event.user] === 'undefined') {
-      return `unknown user ${event.user} in team ${team_id}`
-    }
-
-    return slackRequest
-      .post('chat.postMessage', team._token, {
-        channel: event.channel,
-        text: `Hello there!\nI'm the Timezone Butler, at your service.\n I'll work without you eveen noticing, making sure that everybody in your team are on the same page when talking about time.\n\n If you'd like to see what I'll say to someone who is in a different timezone than yours, you can try chatting here. For example, try to send\n> Can we chat tomorrow around 4pm?`,
-        thread_ts: event.thread_ts,
-      })
-      .then(() => 'sent example to direct message')
   }
 
   const times = timeParser(event.text)
@@ -174,7 +154,7 @@ export default async function (body: {
   type: 'event_callback'
   team_id: string
   event: {
-    type: 'app_uninstalled' | 'message' | 'app_mention'
+    type: 'app_uninstalled' | 'message' | 'app_mention' | 'app_home_opened'
     subtype: string
     bot_id?: string
     hidden: boolean
@@ -185,6 +165,8 @@ export default async function (body: {
     thread_ts: string
   }
 }) {
+  console.log(body.event)
+
   if (body.type !== 'event_callback' || !body.event) {
     return 'not sure how to handle that...'
   }
@@ -193,6 +175,26 @@ export default async function (body: {
 
   if (event.type === 'app_uninstalled') {
     return handleUninstall(body)
+  }
+
+  if (event.type === 'app_home_opened') {
+    const team = await getTeam(body.team_id)
+
+    if (!team) {
+      return `team ${body.team_id} is missing from db`
+    }
+
+    if (typeof team[event.user] === 'undefined') {
+      return `unknown user ${event.user} in team ${body.team_id}`
+    }
+
+    return slackRequest
+      .post('chat.postMessage', team._token, {
+        channel: event.channel,
+        text: `Hello there!\nI'm the Timezone Butler, at your service.\n I'll work without you eveen noticing, making sure that everybody in your team are on the same page when talking about time.\n\n If you'd like to see what I'll say to someone who is in a different timezone than yours, you can try chatting here. For example, try to send\n> Can we chat tomorrow around 4pm?`,
+        thread_ts: event.thread_ts,
+      })
+      .then(() => 'sent example to direct message')
   }
 
   if (event.bot_id) {
