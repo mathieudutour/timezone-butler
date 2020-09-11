@@ -15,7 +15,6 @@ const SUBTYPES = [
 const commandResponse = (
   team: slackRequest.Team,
   event: {
-    channel_type: 'app_home' | 'im'
     user: string
     text: string
     channel: string
@@ -56,9 +55,9 @@ const commandResponse = (
     .then(() => 'sent command response')
 
 const handleSlackMessage = async (
-  team_id: string,
+  { team_id, bot_id }: { team_id: string; bot_id: string },
   event: {
-    type: 'app_uninstalled' | 'message' | 'app_mention'
+    type: 'app_uninstalled' | 'message' | 'app_home_opened'
     channel_type: 'app_home' | 'im'
     user: string
     text: string
@@ -66,6 +65,10 @@ const handleSlackMessage = async (
     thread_ts: string
   }
 ) => {
+  if (event.type === 'app_uninstalled' || event.type === 'app_home_opened') {
+    return
+  }
+
   const times = timeParser(event.text)
 
   // direct message to the bot
@@ -96,25 +99,17 @@ const handleSlackMessage = async (
     return commandResponse(team, event, command)
   }
 
-  if (!times) {
-    if (event.type === 'app_mention') {
-      const command = commandParser(event)
+  const command = commandParser(event, bot_id)
 
-      if (command) {
-        const team = await getTeam(team_id)
+  if (command) {
+    const team = await getTeam(team_id)
 
-        if (!team) {
-          return `team ${team_id} is missing from db`
-        }
-
-        if (typeof team[event.user] === 'undefined') {
-          return `unknown user ${event.user} in team ${team_id}`
-        }
-
-        return commandResponse(team, event, command)
-      }
+    if (team && typeof team[event.user] !== 'undefined') {
+      await commandResponse(team, event, command)
     }
+  }
 
+  if (!times.length) {
     return 'nothing to handle'
   }
 
@@ -151,7 +146,7 @@ export default async function (body: {
   type: 'event_callback'
   team_id: string
   event: {
-    type: 'app_uninstalled' | 'message' | 'app_mention'
+    type: 'app_uninstalled' | 'message' | 'app_home_opened'
     subtype: string
     bot_id?: string
     hidden: boolean
@@ -161,15 +156,48 @@ export default async function (body: {
     channel: string
     thread_ts: string
   }
+  authed_users: string[]
 }) {
   if (body.type !== 'event_callback' || !body.event) {
     return 'not sure how to handle that...'
   }
 
-  const { event } = body
+  const { event, authed_users } = body
+  const bot_id = authed_users[0]
 
   if (event.type === 'app_uninstalled') {
     return handleUninstall(body)
+  }
+
+  if (event.type === 'app_home_opened') {
+    const team = await getTeam(body.team_id)
+
+    if (!team) {
+      return `team ${body.team_id} is missing from db`
+    }
+
+    if (typeof team[event.user] === 'undefined') {
+      return `unknown user ${event.user} in team ${body.team_id}`
+    }
+
+    const previousConvo: {
+      messages: {}[]
+    } = await slackRequest.get('conversations.history', team._token, {
+      channel: event.channel,
+      count: 1,
+    })
+
+    if (previousConvo.messages.length) {
+      return 'already sent welcome message'
+    }
+
+    return slackRequest
+      .post('chat.postMessage', team._token, {
+        channel: event.channel,
+        text: `Hello there!\nI'm the Timezone Butler, at your service.\n I'll work without you eveen noticing, making sure that everybody in your team are on the same page when talking about time.\n\n If you'd like to see what I'll say to someone who is in a different timezone than yours, you can try chatting here. For example, try to send\n> Can we chat tomorrow around 4pm?`,
+        thread_ts: event.thread_ts,
+      })
+      .then(() => 'sent example to direct message')
   }
 
   if (event.bot_id) {
@@ -196,5 +224,5 @@ export default async function (body: {
     return 'ignore'
   }
 
-  return handleSlackMessage(body.team_id, event)
+  return handleSlackMessage({ team_id: body.team_id, bot_id }, event)
 }
