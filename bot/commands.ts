@@ -30,7 +30,10 @@ export type Command =
       event: undefined
     }
 
-export default (event: { text: string }): Command | undefined => {
+export default (
+  event: { text: string },
+  bot_id?: string
+): Command | undefined => {
   const { text } = event
 
   if (typeof text === 'undefined') {
@@ -46,6 +49,10 @@ export default (event: { text: string }): Command | undefined => {
     userMentions.add(match[1])
 
     match = USER_REGEX.exec(text)
+  }
+
+  if (bot_id && !userMentions.has(bot_id)) {
+    return undefined
   }
 
   const askHelp = text.match(HELP_REGEX)

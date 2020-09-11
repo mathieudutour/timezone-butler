@@ -55,9 +55,9 @@ const commandResponse = (
     .then(() => 'sent command response')
 
 const handleSlackMessage = async (
-  team_id: string,
+  { team_id, bot_id }: { team_id: string; bot_id: string },
   event: {
-    type: 'app_uninstalled' | 'message' | 'app_mention' | 'app_home_opened'
+    type: 'app_uninstalled' | 'message' | 'app_home_opened'
     channel_type: 'app_home' | 'im'
     user: string
     text: string
@@ -99,19 +99,17 @@ const handleSlackMessage = async (
     return commandResponse(team, event, command)
   }
 
-  if (event.type === 'app_mention') {
-    const command = commandParser(event)
+  const command = commandParser(event, bot_id)
 
-    if (command) {
-      const team = await getTeam(team_id)
-      console.log(event)
-      if (team && typeof team[event.user] !== 'undefined') {
-        console.log(await commandResponse(team, event, command))
-      }
+  if (command) {
+    const team = await getTeam(team_id)
+
+    if (team && typeof team[event.user] !== 'undefined') {
+      await commandResponse(team, event, command)
     }
   }
 
-  if (!times) {
+  if (!times.length) {
     return 'nothing to handle'
   }
 
@@ -148,7 +146,7 @@ export default async function (body: {
   type: 'event_callback'
   team_id: string
   event: {
-    type: 'app_uninstalled' | 'message' | 'app_mention' | 'app_home_opened'
+    type: 'app_uninstalled' | 'message' | 'app_home_opened'
     subtype: string
     bot_id?: string
     hidden: boolean
@@ -158,12 +156,14 @@ export default async function (body: {
     channel: string
     thread_ts: string
   }
+  authed_users: string[]
 }) {
   if (body.type !== 'event_callback' || !body.event) {
     return 'not sure how to handle that...'
   }
 
-  const { event } = body
+  const { event, authed_users } = body
+  const bot_id = authed_users[0]
 
   if (event.type === 'app_uninstalled') {
     return handleUninstall(body)
@@ -217,12 +217,12 @@ export default async function (body: {
   }
 
   if (
-    (event.type !== 'message' && event.type !== 'app_mention') ||
+    event.type !== 'message' ||
     event.hidden ||
     (event.subtype && SUBTYPES.indexOf(event.subtype) === -1)
   ) {
     return 'ignore'
   }
 
-  return handleSlackMessage(body.team_id, event)
+  return handleSlackMessage({ team_id: body.team_id, bot_id }, event)
 }
