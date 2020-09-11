@@ -101,17 +101,16 @@ const handleSlackMessage = async (
 
   if (event.type === 'app_mention') {
     const command = commandParser(event)
-    console.log(command)
+
     if (command) {
       const team = await getTeam(team_id)
-
+      console.log(team)
       if (team && typeof team[event.user] !== 'undefined') {
-        await commandResponse(team, event, command)
+        console.log(await commandResponse(team, event, command))
       }
     }
   }
 
-  console.log(times)
   if (!times) {
     return 'nothing to handle'
   }
