@@ -66,6 +66,7 @@ const handleSlackMessage = async (
     thread_ts: string
   }
 ) => {
+  console.log(event)
   const times = timeParser(event.text)
 
   // direct message to the bot
