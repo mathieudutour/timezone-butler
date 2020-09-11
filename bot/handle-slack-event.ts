@@ -99,26 +99,20 @@ const handleSlackMessage = async (
     return commandResponse(team, event, command)
   }
 
-  console.log(times)
-  if (!times) {
-    if (event.type === 'app_mention') {
-      const command = commandParser(event)
-      console.log(command)
-      if (command) {
-        const team = await getTeam(team_id)
+  if (event.type === 'app_mention') {
+    const command = commandParser(event)
+    console.log(command)
+    if (command) {
+      const team = await getTeam(team_id)
 
-        if (!team) {
-          return `team ${team_id} is missing from db`
-        }
-
-        if (typeof team[event.user] === 'undefined') {
-          return `unknown user ${event.user} in team ${team_id}`
-        }
-
-        return commandResponse(team, event, command)
+      if (team && typeof team[event.user] !== 'undefined') {
+        await commandResponse(team, event, command)
       }
     }
+  }
 
+  console.log(times)
+  if (!times) {
     return 'nothing to handle'
   }
 
