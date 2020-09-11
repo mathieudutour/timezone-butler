@@ -15,7 +15,6 @@ const SUBTYPES = [
 const commandResponse = (
   team: slackRequest.Team,
   event: {
-    channel_type: 'app_home' | 'im'
     user: string
     text: string
     channel: string
@@ -58,7 +57,7 @@ const commandResponse = (
 const handleSlackMessage = async (
   team_id: string,
   event: {
-    type: 'app_uninstalled' | 'message' | 'app_mention'
+    type: 'app_uninstalled' | 'message' | 'app_mention' | 'app_home_opened'
     channel_type: 'app_home' | 'im'
     user: string
     text: string
@@ -67,6 +66,29 @@ const handleSlackMessage = async (
   }
 ) => {
   console.log(event)
+  if (event.type === 'app_uninstalled') {
+    return
+  }
+  if (event.type === 'app_home_opened') {
+    const team = await getTeam(team_id)
+
+    if (!team) {
+      return `team ${team_id} is missing from db`
+    }
+
+    if (typeof team[event.user] === 'undefined') {
+      return `unknown user ${event.user} in team ${team_id}`
+    }
+
+    return slackRequest
+      .post('chat.postMessage', team._token, {
+        channel: event.channel,
+        text: `Hello there!\nI'm the Timezone Butler, at your service.\n I'll work without you eveen noticing, making sure that everybody in your team are on the same page when talking about time.\n\n If you'd like to see what I'll say to someone who is in a different timezone than yours, you can try chatting here. For example, try to send\n> Can we chat tomorrow around 4pm?`,
+        thread_ts: event.thread_ts,
+      })
+      .then(() => 'sent example to direct message')
+  }
+
   const times = timeParser(event.text)
 
   // direct message to the bot
