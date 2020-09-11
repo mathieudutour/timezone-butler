@@ -225,7 +225,7 @@ export default async function (body: {
   }
 
   if (
-    event.type !== 'message' ||
+    (event.type !== 'message' && event.type !== 'app_mention') ||
     event.hidden ||
     (event.subtype && SUBTYPES.indexOf(event.subtype) === -1)
   ) {
