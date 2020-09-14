@@ -194,7 +194,7 @@ export default async function (body: {
     return slackRequest
       .post('chat.postMessage', team._token, {
         channel: event.channel,
-        text: `Hello there!\nI'm the Timezone Butler, at your service.\n I'll work without you eveen noticing, making sure that everybody in your team are on the same page when talking about time.\n\n If you'd like to see what I'll say to someone who is in a different timezone than yours, you can try chatting here. For example, try to send\n> Can we chat tomorrow around 4pm?`,
+        text: `Hello there!\nI'm the Timezone Butler, at your service.\n I'll work without you even noticing, making sure that everybody in your team are on the same page when talking about time.\n\n If you'd like to see what I'll say to someone who is in a different timezone than yours, you can try chatting here. For example, try to send\n> Can we chat tomorrow around 4pm?`,
         thread_ts: event.thread_ts,
       })
       .then(() => 'sent example to direct message')
