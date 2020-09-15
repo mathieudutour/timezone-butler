@@ -50,7 +50,10 @@ export default function Privacy() {
 
         <h3>How long do we keep your information?</h3>
 
-        <p>Until you remove the Butler from your team.</p>
+        <p>
+          Until you remove the Butler from your team (it will be automatically
+          deleted when the Slack is uninstalled).
+        </p>
 
         <h2>License</h2>
 
