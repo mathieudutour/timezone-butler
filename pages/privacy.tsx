@@ -29,9 +29,16 @@ export default function Privacy() {
         <h3>What information do we collect?</h3>
 
         <p>
-          We only collect the Slack team name and ID when you add the Timezone
-          Butler to your Slack team.
+          We only collect the{' '}
+          <a
+            href="https://github.com/mathieudutour/timezone-butler/blob/develop/utils/db.ts#L12-L17"
+            target="_blank"
+          >
+            Slack team name and ID
+          </a>{' '}
+          when you add the Timezone Butler to your Slack team.
         </p>
+        <p>We do NOT collect any individual's data.</p>
 
         <h3>Will your information be shared with anyone?</h3>
 
@@ -69,7 +76,7 @@ export default function Privacy() {
 
         <p>
           Contact Us. Please send any questions about these stuff to
-          <a href="mailto:mat.dutour@gmail.com">mat.dutour@gmail.com</a>.
+          <a href="mailto:mathieu@dutour.me">mathieu@dutour.me</a>.
         </p>
       </div>
     </Layout>

@@ -36,6 +36,8 @@ export default function Header() {
 
       <meta httpEquiv="Content-Type" content="text/html; charset=utf-8" />
       <meta name="slack-app-id" content={process.env.SLACK_APP_ID} />
+
+      <link rel="shortcut icon" href="/favicon.png" />
     </Head>
   )
 }
