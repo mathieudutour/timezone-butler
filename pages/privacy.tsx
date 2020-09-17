@@ -55,6 +55,18 @@ export default function Privacy() {
           deleted when the Slack is uninstalled).
         </p>
 
+        <h3>How to access/delete/transfer your personal data?</h3>
+
+        <p>
+          Contact us at <a href="mailto:mathieu@dutour.me">mathieu@dutour.me</a>{' '}
+          (there is none but you know, GDPR and legal stuff).
+        </p>
+
+        <p>
+          Until you remove the Butler from your team (it will be automatically
+          deleted when the Slack is uninstalled).
+        </p>
+
         <h2>License</h2>
 
         <p>Copyright (c) 2018-present, Mathieu Dutour</p>
