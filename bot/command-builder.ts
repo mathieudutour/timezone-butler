@@ -3,7 +3,10 @@ import { message } from './message-builder'
 import { Team } from '../utils/slack-request'
 import { Command } from './commands'
 
-export function convenientTime(team: Team, userIds: string[]) {
+export function convenientTime(
+  team: { [id: string]: number },
+  userIds: string[]
+) {
   const userTZs = userIds
     .map((id) => team[id])
     // there might be some bots or other weird stuff so let's just remove them if we don't know them
@@ -29,7 +32,7 @@ export function convenientTime(team: Team, userIds: string[]) {
 }
 
 export default function commandBuilder(
-  team: Team,
+  team: { [id: string]: number },
   posterId: string,
   { command, userIds, event }: Command = {
     command: undefined,
@@ -65,8 +68,7 @@ export default function commandBuilder(
     if (time.start > time.end) {
       return [
         {
-          text:
-            'I am very sorry, there does not seem to be any convenient time for all of you',
+          text: 'I am very sorry, there does not seem to be any convenient time for all of you',
         },
       ]
     }

@@ -1,9 +1,10 @@
 /* globals test, expect */
-const commandBuilder = require('../command-builder')
+import * as Type from '../../utils/slack-request'
+import commandBuilder, { convenientTime } from '../command-builder'
 
 test('convenient times', () => {
   expect(
-    commandBuilder.convenientTime(
+    convenientTime(
       {
         a: 0,
         b: -7200,
@@ -13,7 +14,7 @@ test('convenient times', () => {
     )
   ).toEqual({ start: 10 * 3600, end: 17 * 3600 })
   expect(
-    commandBuilder.convenientTime(
+    convenientTime(
       {
         a: 0,
         b: -7200,
@@ -34,23 +35,25 @@ test('should build a message for a convenient time', () => {
         d: 0,
       },
       'a',
-      { command: 'convenient-time', userIds: new Set(['a', 'b', 'c']) }
+      {
+        command: 'convenient-time',
+        userIds: new Set(['a', 'b', 'c']),
+        message: '',
+        event: { text: '' },
+      }
     )
   ).toEqual([
     {
-      text:
-        'A convenient time for all of you would be between 10am and 5pm UTC.',
+      text: 'A convenient time for all of you would be between 10am and 5pm UTC.',
     },
     [
       { text: undefined, user: 'a' },
       {
-        text:
-          '10am UTC is 8am in your timezone.\n5pm UTC is 3pm in your timezone.',
+        text: '10am UTC is 8am in your timezone.\n5pm UTC is 3pm in your timezone.',
         user: 'b',
       },
       {
-        text:
-          '10am UTC is noon in your timezone.\n5pm UTC is 7pm in your timezone.',
+        text: '10am UTC is noon in your timezone.\n5pm UTC is 7pm in your timezone.',
         user: 'c',
       },
     ],
@@ -65,22 +68,24 @@ test('should build a message for a convenient time', () => {
         d: 0,
       },
       'b',
-      { command: 'convenient-time', userIds: new Set(['b', 'c']) }
+      {
+        command: 'convenient-time',
+        userIds: new Set(['b', 'c']),
+        message: '',
+        event: { text: '' },
+      }
     )
   ).toEqual([
     {
-      text:
-        'A convenient time for all of you would be between 5pm and 6pm UTC.',
+      text: 'A convenient time for all of you would be between 5pm and 6pm UTC.',
     },
     [
       {
-        text:
-          '5pm UTC is 6pm in your timezone.\n6pm UTC is 7pm in your timezone.',
+        text: '5pm UTC is 6pm in your timezone.\n6pm UTC is 7pm in your timezone.',
         user: 'b',
       },
       {
-        text:
-          '5pm UTC is 8am in your timezone.\n6pm UTC is 9am in your timezone.',
+        text: '5pm UTC is 8am in your timezone.\n6pm UTC is 9am in your timezone.',
         user: 'c',
       },
     ],
@@ -97,12 +102,16 @@ test('should build a message when there is no convenient time', () => {
         d: 0,
       },
       'b',
-      { command: 'convenient-time', userIds: new Set(['b', 'c']) }
+      {
+        command: 'convenient-time',
+        userIds: new Set(['b', 'c']),
+        message: '',
+        event: { text: '' },
+      }
     )
   ).toEqual([
     {
-      text:
-        'I am very sorry, there does not seem to be any convenient time for all of you',
+      text: 'I am very sorry, there does not seem to be any convenient time for all of you',
     },
   ])
 })
