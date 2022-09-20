@@ -1,5 +1,5 @@
 /* globals test, expect */
-const timezones = require('../timezones')
+import timezones from '../timezones'
 
 test('should return empty array when no time to parse', () => {
   expect(timezones('no time to parse')).toEqual([])

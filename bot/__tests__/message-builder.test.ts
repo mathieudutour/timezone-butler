@@ -1,5 +1,5 @@
 /* globals test, expect */
-const messageBuilder = require('../message-builder')
+import messageBuilder from '../message-builder'
 
 test('should build a message for people in a different timezone', () => {
   expect(
@@ -17,6 +17,7 @@ test('should build a message for people in a different timezone', () => {
           time: 73800,
           timezoneModifier: undefined,
           timezoneModifierValue: undefined,
+          ambigousAPM: false,
         },
       ]
     )
@@ -48,19 +49,20 @@ test('should build a message for people in a different timezone when there are m
           time: 73800,
           timezoneModifier: undefined,
           timezoneModifierValue: undefined,
+          ambigousAPM: false,
         },
         {
           match: '1am',
           time: 3600,
           timezoneModifier: undefined,
           timezoneModifierValue: undefined,
+          ambigousAPM: false,
         },
       ]
     )
   ).toEqual([
     {
-      text:
-        '8:30pm is 7:30pm in your timezone.\n1am is midnight the day before in your timezone.',
+      text: '8:30pm is 7:30pm in your timezone.\n1am is midnight the day before in your timezone.',
       user: 'b',
     },
     {
@@ -86,24 +88,24 @@ test('should build a message even if the day changes', () => {
           time: 23 * 3600,
           timezoneModifier: undefined,
           timezoneModifierValue: undefined,
+          ambigousAPM: false,
         },
         {
           match: '1am',
           time: 3600,
           timezoneModifier: undefined,
           timezoneModifierValue: undefined,
+          ambigousAPM: false,
         },
       ]
     )
   ).toEqual([
     {
-      text:
-        '11pm is 9pm in your timezone.\n1am is 11pm the day before in your timezone.',
+      text: '11pm is 9pm in your timezone.\n1am is 11pm the day before in your timezone.',
       user: 'b',
     },
     {
-      text:
-        '11pm is 1am the day after in your timezone.\n1am is 3am in your timezone.',
+      text: '11pm is 1am the day after in your timezone.\n1am is 3am in your timezone.',
       user: 'c',
     },
   ])

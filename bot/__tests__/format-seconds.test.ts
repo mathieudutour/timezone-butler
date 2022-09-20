@@ -1,5 +1,5 @@
 /* globals test, expect */
-const formatSeconds = require('../format-seconds')
+import formatSeconds from '../format-seconds'
 
 test('should format a number of seconds', () => {
   expect(formatSeconds(3600)).toBe('1am')
