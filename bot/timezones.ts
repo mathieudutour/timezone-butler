@@ -107,6 +107,11 @@ export default function (message: string) {
       hours += 12
     }
 
+    // weird people using 12:05pm to mean five past noon
+    if ((amOrPm && hours === 12) || hours === 24) {
+      hours -= 12
+    }
+
     let timezoneModifier: string | undefined =
       match[1] || match[11] || match[10]
     if (timezoneModifier) {
@@ -132,6 +137,16 @@ export default function (message: string) {
     )
 
     match = REGEX.exec(message)
+  }
+
+  if (message.match(' noon') || message.match('noon ') || message === 'noon') {
+    times.push({
+      match: 'noon',
+      time: 12 * 3600,
+      timezoneModifier: undefined,
+      timezoneModifierValue: undefined,
+      ambigousAPM: false,
+    })
   }
 
   const dedupe: { [key: string]: boolean } = {}
