@@ -11,7 +11,6 @@ test('should find a time with no modifier', () => {
       match: '8:30',
       time: 8.5 * 60 * 60,
       timezoneModifier: undefined,
-      timezoneModifierValue: undefined,
       ambigousAPM: false,
     },
   ])
@@ -21,7 +20,6 @@ test('should find a time with no modifier', () => {
       match: '20:30',
       time: 20.5 * 60 * 60,
       timezoneModifier: undefined,
-      timezoneModifierValue: undefined,
       ambigousAPM: false,
     },
   ])
@@ -33,7 +31,6 @@ test('should find a time with am', () => {
       match: '8:30am',
       time: 8.5 * 60 * 60,
       timezoneModifier: undefined,
-      timezoneModifierValue: undefined,
       ambigousAPM: false,
     },
   ])
@@ -42,7 +39,6 @@ test('should find a time with am', () => {
       match: '11:30am',
       time: 11.5 * 60 * 60,
       timezoneModifier: undefined,
-      timezoneModifierValue: undefined,
       ambigousAPM: false,
     },
   ])
@@ -51,7 +47,6 @@ test('should find a time with am', () => {
       match: '12:30am',
       time: 0.5 * 60 * 60,
       timezoneModifier: undefined,
-      timezoneModifierValue: undefined,
       ambigousAPM: false,
     },
   ])
@@ -63,7 +58,6 @@ test('should find a time with pm', () => {
       match: '8:30pm',
       time: 20.5 * 60 * 60,
       timezoneModifier: undefined,
-      timezoneModifierValue: undefined,
       ambigousAPM: false,
     },
   ])
@@ -72,7 +66,6 @@ test('should find a time with pm', () => {
       match: '11:30pm',
       time: 23.5 * 60 * 60,
       timezoneModifier: undefined,
-      timezoneModifierValue: undefined,
       ambigousAPM: false,
     },
   ])
@@ -81,7 +74,6 @@ test('should find a time with pm', () => {
       match: '12:30pm',
       time: 12.5 * 60 * 60,
       timezoneModifier: undefined,
-      timezoneModifierValue: undefined,
       ambigousAPM: false,
     },
   ])
@@ -93,7 +85,6 @@ test('should find a time a timezone modifier', () => {
       match: '8:30am PST',
       time: 8.5 * 60 * 60,
       timezoneModifier: 'PST',
-      timezoneModifierValue: -28800,
       ambigousAPM: false,
     },
   ])
@@ -103,7 +94,6 @@ test('should find a time a timezone modifier', () => {
       match: '8:30am',
       time: 8.5 * 60 * 60,
       timezoneModifier: undefined,
-      timezoneModifierValue: undefined,
       ambigousAPM: false,
     },
   ])
@@ -113,7 +103,6 @@ test('should find a time a timezone modifier', () => {
       match: '8:30am',
       time: 8.5 * 60 * 60,
       timezoneModifier: undefined,
-      timezoneModifierValue: undefined,
       ambigousAPM: false,
     },
   ])
@@ -123,7 +112,6 @@ test('should find a time a timezone modifier', () => {
       match: 'PST 8:30am',
       time: 8.5 * 60 * 60,
       timezoneModifier: 'PST',
-      timezoneModifierValue: -28800,
       ambigousAPM: false,
     },
   ])
@@ -135,7 +123,6 @@ test('should find a time a timezone modifier without am or pm', () => {
       match: '8 PST',
       time: 8 * 60 * 60,
       timezoneModifier: 'PST',
-      timezoneModifierValue: -28800,
       ambigousAPM: true,
     },
   ])
@@ -147,7 +134,6 @@ test('should find noon', () => {
       match: 'noon',
       time: 12 * 60 * 60,
       timezoneModifier: undefined,
-      timezoneModifierValue: undefined,
       ambigousAPM: false,
     },
   ])
@@ -159,14 +145,12 @@ test('should find multiple times', () => {
       match: '8:30am PST',
       time: 8.5 * 60 * 60,
       timezoneModifier: 'PST',
-      timezoneModifierValue: -28800,
       ambigousAPM: false,
     },
     {
       match: '8:30pm',
       time: 20.5 * 60 * 60,
       timezoneModifier: undefined,
-      timezoneModifierValue: undefined,
       ambigousAPM: false,
     },
   ])
@@ -178,7 +162,6 @@ test('should not return duplicated times', () => {
       match: '8:30am',
       time: 8.5 * 60 * 60,
       timezoneModifier: undefined,
-      timezoneModifierValue: undefined,
       ambigousAPM: false,
     },
   ])
@@ -194,7 +177,6 @@ test('should not return not valid time', () => {
 //       match: '8 PST',
 //       time: 28800,
 //       timezoneModifier: 'PST',
-//       timezoneModifierValue: -28800,
 //       ambigousAPM: true,
 //     },
 //   ])

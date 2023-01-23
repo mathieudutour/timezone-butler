@@ -8,6 +8,11 @@ test('should format a number of seconds', () => {
   expect(formatSeconds(13 * 3600 + 600)).toBe('1:10pm')
 })
 
+test('should format a number of seconds around noon and midnight', () => {
+  expect(formatSeconds(0.5 * 3600)).toBe('12:30am')
+  expect(formatSeconds(12.5 * 3600)).toBe('12:30pm')
+})
+
 test('should format midnight', () => {
   expect(formatSeconds(0)).toBe('midnight the day before')
   expect(formatSeconds(24 * 3600)).toBe('midnight the day after')

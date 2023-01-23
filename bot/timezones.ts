@@ -1,4 +1,4 @@
-const timezones: { [tz: string]: number } = {
+export const timezones: { [tz: string]: number } = {
   NZDT: 12 * 3600,
   AEDT: 11 * 3600,
   ACDT: 10.5 * 3600,
@@ -75,10 +75,8 @@ export type Time = {
   match: string
   time: number
   ambigousAPM: boolean
-} & (
-  | { timezoneModifier: string; timezoneModifierValue: number }
-  | { timezoneModifier: undefined; timezoneModifierValue: undefined }
-)
+  timezoneModifier?: string
+}
 
 export default function (message: string) {
   const times: Time[] = []
@@ -118,20 +116,21 @@ export default function (message: string) {
       timezoneModifier = timezoneModifier.trim().toUpperCase()
     }
 
+    if (!timezones[timezoneModifier]) {
+      timezoneModifier = undefined
+    }
+
     times.push(
       timezoneModifier
         ? {
             match: match[0].trim(),
             time: hours * 3600 + minutes * 60,
             timezoneModifier,
-            timezoneModifierValue: timezones[timezoneModifier],
             ambigousAPM: !!match[10],
           }
         : {
             match: match[0].trim(),
             time: hours * 3600 + minutes * 60,
-            timezoneModifier: undefined,
-            timezoneModifierValue: undefined,
             ambigousAPM: !!match[10],
           }
     )
@@ -143,19 +142,17 @@ export default function (message: string) {
     times.push({
       match: 'noon',
       time: 12 * 3600,
-      timezoneModifier: undefined,
-      timezoneModifierValue: undefined,
       ambigousAPM: false,
     })
   }
 
   const dedupe: { [key: string]: boolean } = {}
 
-  return times.filter(({ time, timezoneModifierValue }) => {
-    if (dedupe[`${time}${timezoneModifierValue}`]) {
+  return times.filter(({ time, timezoneModifier }) => {
+    if (dedupe[`${time}${timezoneModifier}`]) {
       return false
     }
-    dedupe[`${time}${timezoneModifierValue}`] = true
+    dedupe[`${time}${timezoneModifier}`] = true
     return true
   })
 }

@@ -16,7 +16,6 @@ test('should build a message for people in a different timezone', () => {
           match: '8:30pm',
           time: 73800,
           timezoneModifier: undefined,
-          timezoneModifierValue: undefined,
           ambigousAPM: false,
         },
       ]
@@ -48,14 +47,12 @@ test('should build a message for people in a different timezone when there are m
           match: '8:30pm',
           time: 73800,
           timezoneModifier: undefined,
-          timezoneModifierValue: undefined,
           ambigousAPM: false,
         },
         {
           match: '1am',
           time: 3600,
           timezoneModifier: undefined,
-          timezoneModifierValue: undefined,
           ambigousAPM: false,
         },
       ]
@@ -87,14 +84,12 @@ test('should build a message even if the day changes', () => {
           match: '11pm',
           time: 23 * 3600,
           timezoneModifier: undefined,
-          timezoneModifierValue: undefined,
           ambigousAPM: false,
         },
         {
           match: '1am',
           time: 3600,
           timezoneModifier: undefined,
-          timezoneModifierValue: undefined,
           ambigousAPM: false,
         },
       ]
@@ -107,6 +102,37 @@ test('should build a message even if the day changes', () => {
     {
       text: '11pm is 1am the day after in your timezone.\n1am is 3am in your timezone.',
       user: 'c',
+    },
+  ])
+})
+
+test('should build a message around midnight', () => {
+  expect(
+    messageBuilder(
+      {
+        a: 3600,
+        b: 0,
+      },
+      'a',
+      [
+        {
+          match: '1:30am',
+          time: 1.5 * 60 * 60,
+          timezoneModifier: undefined,
+          ambigousAPM: false,
+        },
+        {
+          match: '1:30pm',
+          time: 13.5 * 60 * 60,
+          timezoneModifier: undefined,
+          ambigousAPM: false,
+        },
+      ]
+    )
+  ).toEqual([
+    {
+      text: '1:30am is 12:30am in your timezone.\n1:30pm is 12:30pm in your timezone.',
+      user: 'b',
     },
   ])
 })
