@@ -1,30 +1,22 @@
 import secondsFormatter from './format-seconds'
-import { Time } from './timezones'
+import { Time, timezones } from './timezones'
 
 export function message(times: Time[], userTZ: number, posterTZ: number) {
-  if (!userTZ) {
-    return undefined
-  }
-
-  const text = times.map(
-    ({ match, time, timezoneModifier, timezoneModifierValue }) => {
-      if (
-        typeof timezoneModifier !== 'undefined' &&
-        typeof timezoneModifierValue !== 'undefined'
-      ) {
-        if (timezoneModifierValue === userTZ) {
-          return `${timezoneModifier} is your timezone.`
-        }
-        return `${match} is ${secondsFormatter(
-          time + userTZ - timezoneModifierValue
-        )} in your timezone.`
+  const text = times.map(({ match, time, timezoneModifier }) => {
+    if (typeof timezoneModifier !== 'undefined') {
+      const timezone = timezones[timezoneModifier]
+      if (timezone === userTZ) {
+        return `${timezoneModifier} is your timezone.`
       }
-
       return `${match} is ${secondsFormatter(
-        time + userTZ - posterTZ
+        time + userTZ - timezone
       )} in your timezone.`
     }
-  )
+
+    return `${match} is ${secondsFormatter(
+      time + userTZ - posterTZ
+    )} in your timezone.`
+  })
 
   return [...new Set(text)].join('\n')
 }
@@ -41,7 +33,10 @@ export default function messageBuilder(
   }
 
   const usersInDiffTZ = Object.keys(team).filter(
-    (userId) => userId !== posterId && team[userId] !== posterTZ
+    (userId) =>
+      userId !== posterId &&
+      team[userId] !== posterTZ &&
+      typeof team[userId] !== 'undefined'
   )
 
   return usersInDiffTZ.map((userId) => {

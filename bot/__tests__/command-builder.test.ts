@@ -47,7 +47,7 @@ test('should build a message for a convenient time', () => {
       text: 'A convenient time for all of you would be between 10am and 5pm UTC.',
     },
     [
-      { text: undefined, user: 'a' },
+      { text: 'UTC is your timezone.', user: 'a' },
       {
         text: '10am UTC is 8am in your timezone.\n5pm UTC is 3pm in your timezone.',
         user: 'b',
